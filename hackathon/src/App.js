@@ -64,20 +64,20 @@ function App() {
     <div className="Container-fluid">
       <div className="row">
         <div className="col">
-          <Plot
-            // data={[
-            //   {chartData },
-            // ]}
-            data={[
-              { type: 'bar',
-              x: Object.values(users) ,
-              y: Object.values(posts) },
-            ]}
+          <Plot 
+            //This work : 
             // data={[
             //   { type: 'bar',
-            //   x: [1,2,3],
-            //   y: [1,2,3] },
+            //   x: Object.values(users) ,
+            //   y: Object.values(posts) },
             // ]}
+
+            //This work too
+            data={[
+              { type: 'bar',
+              x:  users  ,
+              y: posts  },
+            ]} 
           // layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
           />
         </div>
