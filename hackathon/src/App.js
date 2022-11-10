@@ -1,103 +1,89 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import axios from "axios"
-import {useState, useEffect} from 'react'
-
-function getUser() {
-  let rval = {}
-  let rrval = [];
-  axios.get('https://jsonplaceholder.typicode.com/users')
-  .then(function (response) {
-    response.data.forEach(element => {
-      rval[element.id] = (element.name)
-    }); 
-    for (const [key, value] of Object.entries(rval)){
-      rrval.push(value);
-    }
-    console.log(rrval);
-    return rrval;
-  }) 
-}
-function getPost() {
-  let rval = {};
-  let rrval = [];
-  axios.get('https://jsonplaceholder.typicode.com/posts')
-  .then(function (response) {
-    response.data.forEach(element => {
-      rval[element.userId]=(rval[element.userId] || 0) + 1;
-    }); 
-    for (const [key, value] of Object.entries(rval)){
-      rrval.push(value);
-    }
-    console.log(rrval);
-    return rrval;
-  }) 
-}
-
+import { useState, useEffect } from 'react'
+ 
 function App() {
-  
-  const [chartData, setChartData] = useState({});
-  const[user, setUser] = useState([])
-  const[post, setPost] = useState([])
-  
-  const chart = () => {
-    let users = [];
-    let posts = [];
-    let rval = [];
+
+  // const [chartData, setChartData] = useState({});
+  const [users, setUser] = useState([])
+  const [posts, setPost] = useState([])
+
+  useEffect(() => {
+    let rval = {};
+    let postsList = [];
     axios
       .get('https://jsonplaceholder.typicode.com/posts')
-      .then(response => { 
+      .then(response => {
         response.data.forEach(element => {
-          rval[element.userId]=(rval[element.userId] || 0) + 1;
-        }); 
-        for (const [key, value] of Object.entries(rval)){
-          posts.push(value);
-        }
-        setChartData({
-          x: users,
-          y: posts,
-          type: 'bar'
+          rval[element.userId] = (rval[element.userId] || 0) + 1;
         });
+        for (const [key, value] of Object.entries(rval)) {
+          postsList.push(value);
+        }
+        setPost(() => ( 
+          postsList
+         ))
+
+
       })
       .catch(err => {
         console.log(err);
       });
-    axios.get('https://jsonplaceholder.typicode.com/users')
-    .then(function (response) {
-      response.data.forEach(element => {
-        rval[element.id] = (element.name)
-      }); 
-      for (const [key, value] of Object.entries(rval)){
-        users.push(value);
-      } 
-      setChartData({
-        x: users,
-        y: posts,
-        type: 'bar'
-      });
-    }) 
-       
-  };
+  }, [])
 
   useEffect(() => {
-    chart();
-  }, []);
+    let rval = {};
+    let usersList = [];
+    axios.get('https://jsonplaceholder.typicode.com/users')
+      .then(function (response) {
+        response.data.forEach(element => {
+          rval[element.id] = (element.name)
+        });
+        for (const [key, value] of Object.entries(rval)) {
+          usersList.push(value);
+        }
+        setUser(() => (  usersList  ))
 
-    return (
-      <div className = "Container-fluid">
-        <div className = "row"> 
-          <div className = "col">
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, [])
+
+  // useEffect(() => { 
+  //   setChartData([{
+  //     type: 'bar',
+  //     x: users,
+  //     y: posts
+  //   }]);
+  //   console.log(chartData);
+  // }, [users, posts])
+
+  return (
+    <div className="Container-fluid">
+      <div className="row">
+        <div className="col">
           <Plot
-        data={[ 
-          {chartData},
-        ]}
-        // layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
-      />
-          </div>
+            // data={[
+            //   {chartData },
+            // ]}
+            data={[
+              { type: 'bar',
+              x: Object.values(users) ,
+              y: Object.values(posts) },
+            ]}
+            // data={[
+            //   { type: 'bar',
+            //   x: [1,2,3],
+            //   y: [1,2,3] },
+            // ]}
+          // layout={ {width: 320, height: 240, title: 'A Fancy Plot'} }
+          />
         </div>
       </div>
-     
-    );
-  }
+    </div>
+  );
+}
 
 export default App;
